@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimaAtivo - ODS 13</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="page-wrap">
+    <div class="container">
+        <header class="header">
+            <div class="header-brand">
+                <h1><i class="fas fa-leaf" aria-hidden="true"></i> ClimaAtivo</h1>
+                <p class="header-tagline">ODS 13 · Ação climática</p>
+            </div>
+            <div class="header-score">
+                <span class="co2-label">Pegada estimada</span>
+                <div class="co2-score" id="co2Score">0 kg CO₂</div>
+            </div>
+        </header>
+
+        <nav class="nav" aria-label="Seções principais">
+            <button type="button" class="nav-btn active" data-section="calc">
+                <i class="fas fa-calculator" aria-hidden="true"></i>
+                <span>Calculadora</span>
+            </button>
+            <button type="button" class="nav-btn" data-section="challenges">
+                <i class="fas fa-trophy" aria-hidden="true"></i>
+                <span>Desafios</span>
+            </button>
+            <button type="button" class="nav-btn" data-section="map">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Mapa</span>
+            </button>
+            <button type="button" class="nav-btn" data-section="dashboard">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                <span>Dashboard</span>
+            </button>
+        </nav>
+
+        <main class="main-content">
+        <!-- Calculadora -->
+        <section id="calc" class="section active" aria-labelledby="calc-title">
+            <h2 id="calc-title" class="section-title">Calculadora de pegada de carbono</h2>
+            <p class="section-lead">Informe seus dados para estimar emissões de CO₂ (valores aproximados).</p>
+            <div class="calc-layout">
+                <div class="card-panel calc-form">
+                    <div class="form-group">
+                        <label for="kmCarro">Km rodados (carro)</label>
+                        <input type="number" id="kmCarro" placeholder="0" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="kwhEnergia">kWh de energia</label>
+                        <input type="number" id="kwhEnergia" placeholder="0" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="kgLixo">Kg de lixo gerado</label>
+                        <input type="number" id="kgLixo" placeholder="0" min="0" step="0.1">
+                    </div>
+                    <button type="button" class="btn" id="btnCalcular">
+                        <i class="fas fa-calculator" aria-hidden="true"></i> Calcular pegada
+                    </button>
+                </div>
+                <div class="card-panel calc-chart-wrap">
+                    <h3 class="panel-title">Distribuição por fonte</h3>
+                    <div class="chart-container">
+                        <canvas id="co2Chart" aria-label="Gráfico da pegada por carro, energia e lixo"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Desafios -->
+        <section id="challenges" class="section" aria-labelledby="challenges-title">
+            <h2 id="challenges-title" class="section-title">Desafios diários</h2>
+            <p class="section-lead">Complete ações e ganhe pontos em prol do clima.</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="pontos">0</div>
+                    <div class="stat-label">Pontos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="badges">0</div>
+                    <div class="stat-label">Badges</div>
+                </div>
+            </div>
+            <div id="desafiosList" class="challenge-grid">
+                <div class="challenge-card" data-challenge-id="transporte" data-pts="50" data-tipo="transporte" role="button" tabindex="0">
+                    <div class="challenge-title">Use transporte público hoje</div>
+                    <div class="challenge-points">+50 pontos</div>
+                </div>
+                <div class="challenge-card" data-challenge-id="energia" data-pts="30" data-tipo="energia" role="button" tabindex="0">
+                    <div class="challenge-title">Desligue luzes desnecessárias</div>
+                    <div class="challenge-points">+30 pontos</div>
+                </div>
+                <div class="challenge-card" data-challenge-id="arvore" data-pts="100" data-tipo="arvore" role="button" tabindex="0">
+                    <div class="challenge-title">Plante uma árvore virtual</div>
+                    <div class="challenge-points">+100 pontos</div>
+                </div>
+            </div>
+            <div class="badge" id="badgeContainer" hidden></div>
+        </section>
+
+        <!-- Mapa -->
+        <section id="map" class="section" aria-labelledby="map-title">
+            <h2 id="map-title" class="section-title">Ações locais em Salvador</h2>
+            <p class="section-lead">Mapa com exemplos de pontos de coleta e mutirões.</p>
+            <div id="mapa" class="map-leaflet"></div>
+            <div class="actions-grid">
+            <div class="action-card" id="btnRegistrarAcao" role="button" tabindex="0">
+                <i class="fas fa-plus-circle" aria-hidden="true"></i> Registrar nova ação local
+            </div>
+            <div class="action-card action-card--map" role="button" tabindex="0" data-lat="-12.9880" data-lng="-38.4640" data-zoom="15" title="Ver no mapa">
+                <i class="fas fa-recycle" aria-hidden="true"></i> Pontos de coleta - Pituba
+            </div>
+            <div class="action-card action-card--map" role="button" tabindex="0" data-lat="-12.9990" data-lng="-38.4880" data-zoom="15" title="Ver no mapa">
+                <i class="fas fa-seedling" aria-hidden="true"></i> Mutirão de plantio - Rio Vermelho
+            </div>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="section" aria-labelledby="dashboard-title">
+            <h2 id="dashboard-title" class="section-title">Relatório semanal</h2>
+            <p class="section-lead">Visão resumida do seu engajamento (dados ilustrativos).</p>
+            <div class="dashboard-layout">
+                <div class="card-panel dashboard-chart-panel">
+                    <h3 class="panel-title">Emissões ao longo da semana</h3>
+                    <div class="chart-container chart-container--dashboard">
+                        <canvas id="dashboardChart" aria-label="Gráfico semanal de emissões"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-side">
+                    <div class="stats-grid stats-grid--dashboard">
+                        <div class="stat-card">
+                            <div class="stat-number stat-number--dashboard" id="statPegada">—</div>
+                            <div class="stat-label">Pegada calculada</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number stat-number--dashboard" id="statDesafios">0</div>
+                            <div class="stat-label">Desafios concluídos</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn--inline" id="btnShare">
+                        <i class="fas fa-share-alt" aria-hidden="true"></i> Compartilhar progresso
+                    </button>
+                </div>
+            </div>
+        </section>
+        </main>
+    </div>
+    </div>
+
+    <script src="js/app.js" defer></script>
+</body>
+</html>
