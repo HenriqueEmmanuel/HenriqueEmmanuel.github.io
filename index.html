@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tekton</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+      scroll-behavior:smooth;
+    }
+
+    body{
+      background:#0b1020;
+      color:white;
+      overflow-x:hidden;
+    }
+
+    body::before,
+    body::after{
+      content:'';
+      position:fixed;
+      width:350px;
+      height:350px;
+      border-radius:50%;
+      filter:blur(120px);
+      z-index:-1;
+    }
+
+    body::before{
+      background:#00d9ff33;
+      top:-100px;
+      left:-100px;
+    }
+
+    body::after{
+      background:#0066ff33;
+      bottom:-100px;
+      right:-100px;
+    }
+
+    .container{
+      width:90%;
+      max-width:1200px;
+      margin:auto;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      backdrop-filter:blur(12px);
+      background:rgba(10,15,30,0.75);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    .navbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:20px 0;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo-box{
+      width:50px;
+      height:50px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#00d9ff,#0066ff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+      font-weight:bold;
+      box-shadow:0 0 25px rgba(0,217,255,.4);
+    }
+
+    .logo h1{
+      font-size:28px;
+      letter-spacing:1px;
+    }
+
+    .logo p{
+      font-size:12px;
+      color:#aaa;
+    }
+
+    nav{
+      display:flex;
+      gap:30px;
+    }
+
+    nav a{
+      color:#ddd;
+      text-decoration:none;
+      transition:.3s;
+    }
+
+    nav a:hover{
+      color:#00d9ff;
+    }
+
+    .btn{
+      background:#00d9ff;
+      color:#07101f;
+      border:none;
+      padding:14px 28px;
+      border-radius:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:.3s;
+      box-shadow:0 0 25px rgba(0,217,255,.3);
+    }
+
+    .btn:hover{
+      transform:translateY(-3px);
+      background:#31e2ff;
+    }
+
+    .btn-outline{
+      background:transparent;
+      color:white;
+      border:1px solid rgba(255,255,255,.2);
+      padding:14px 28px;
+      border-radius:16px;
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .btn-outline:hover{
+      border-color:#00d9ff;
+      color:#00d9ff;
+    }
+
+    .hero{
+      min-height:90vh;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      align-items:center;
+      gap:60px;
+      padding:80px 0;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:10px 18px;
+      border-radius:999px;
+      background:rgba(0,217,255,.1);
+      border:1px solid rgba(0,217,255,.3);
+      color:#7defff;
+      margin-bottom:25px;
+    }
+
+    .hero h2{
+      font-size:64px;
+      line-height:1.1;
+      margin-bottom:25px;
+    }
+
+    .hero p{
+      color:#b7b7b7;
+      font-size:18px;
+      line-height:1.7;
+      margin-bottom:35px;
+    }
+
+    .hero-buttons{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .stats{
+      display:flex;
+      gap:50px;
+      margin-top:50px;
+      flex-wrap:wrap;
+    }
+
+    .stats h3{
+      color:#00d9ff;
+      font-size:36px;
+      margin-bottom:5px;
+    }
+
+    .stats span{
+      color:#aaa;
+    }
+
+    .dashboard-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      padding:35px;
+      border-radius:35px;
+      backdrop-filter:blur(15px);
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+    }
+
+    .dashboard-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:35px;
+    }
+
+    .rocket{
+      width:60px;
+      height:60px;
+      border-radius:18px;
+      background:rgba(0,217,255,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+    }
+
+    .progress-box{
+      background:#121a31;
+      padding:20px;
+      border-radius:22px;
+      margin-bottom:20px;
+    }
+
+    .progress-top{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:12px;
+      color:#bbb;
+    }
+
+    .bar{
+      width:100%;
+      height:12px;
+      background:rgba(255,255,255,.08);
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .fill{
+      height:100%;
+      border-radius:999px;
+    }
+
+    .services,
+    .about,
+    .cta{
+      padding:100px 0;
+    }
+
+    .section-title{
+      text-align:center;
+      margin-bottom:70px;
+    }
+
+    .section-title p{
+      color:#00d9ff;
+      text-transform:uppercase;
+      letter-spacing:4px;
+      margin-bottom:10px;
+      font-weight:bold;
+    }
+
+    .section-title h2{
+      font-size:52px;
+    }
+
+    .services-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+    }
+
+    .service-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      padding:35px;
+      border-radius:30px;
+      transition:.35s;
+      backdrop-filter:blur(10px);
+    }
+
+    .service-card:hover{
+      transform:translateY(-8px);
+      border-color:rgba(0,217,255,.35);
+    }
+
+    .service-card .icon{
+      font-size:52px;
+      margin-bottom:20px;
+    }
+
+    .service-card h3{
+      margin-bottom:15px;
+      font-size:28px;
+    }
+
+    .service-card p{
+      color:#aaa;
+      line-height:1.7;
+    }
+
+    .about-box{
+      background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(0,102,255,.08));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:40px;
+      padding:60px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:50px;
+      align-items:center;
+    }
+
+    .about-box h2{
+      font-size:52px;
+      margin-bottom:25px;
+    }
+
+    .about-box p{
+      color:#bbb;
+      line-height:1.8;
+      margin-bottom:30px;
+    }
+
+    .about-stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:25px;
+    }
+
+    .mini-card{
+      background:#121a31;
+      padding:35px;
+      border-radius:28px;
+    }
+
+    .mini-card h3{
+      color:#00d9ff;
+      font-size:42px;
+      margin-bottom:10px;
+    }
+
+    .mini-card p{
+      margin:0;
+      color:#aaa;
+    }
+
+    .cta-box{
+      background:linear-gradient(135deg,#00d9ff,#0066ff);
+      border-radius:40px;
+      padding:70px 40px;
+      text-align:center;
+      box-shadow:0 20px 60px rgba(0,217,255,.25);
+    }
+
+    .cta-box h2{
+      font-size:52px;
+      margin-bottom:20px;
+    }
+
+    .cta-box p{
+      max-width:700px;
+      margin:0 auto 35px;
+      font-size:18px;
+      line-height:1.7;
+      color:#eefcff;
+    }
+
+    .cta-buttons{
+      display:flex;
+      justify-content:center;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    footer{
+      padding:30px;
+      text-align:center;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#777;
+    }
+
+    @media(max-width:950px){
+      .hero,
+      .about-box{
+        grid-template-columns:1fr;
+      }
+
+      .hero h2,
+      .section-title h2,
+      .about-box h2,
+      .cta-box h2{
+        font-size:42px;
+      }
+
+      nav{
+        display:none;
+      }
+    }
+
+    @media(max-width:600px){
+      .hero h2,
+      .section-title h2,
+      .about-box h2,
+      .cta-box h2{
+        font-size:34px;
+      }
+
+      .about-box,
+      .cta-box{
+        padding:35px 25px;
+      }
+
+      .stats{
+        gap:25px;
+      }
+    }
+    .logo-box{
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 0 25px rgba(0,217,255,.2);
+}
+
+.logo-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container navbar">
+      <div class="logo">
+        <div class="logo-box">
+    <img src="logo.png" alt="Tekton Logo">
+</div>
+
+        <div>
+          <h1>TEKTON</h1>
+          <p>Software & Digital Solutions</p>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#services">Serviços</a>
+        <a href="#about">Sobre</a>
+        <a href="#contact">Contato</a>
+      </nav>
+
+      <button class="btn">Solicitar orçamento</button>
+    </div>
+  </header>
+
+  <section class="hero container">
+    <div>
+      <div class="badge">⚡ Tecnologia que impulsiona negócios</div>
+
+      <h2>Construindo soluções digitais para o futuro.</h2>
+
+      <p>
+        A Tekton desenvolve sistemas web, plataformas modernas e soluções tecnológicas sob medida para empresas que querem crescer com inovação.
+      </p>
+
+      <div class="hero-buttons">
+        <button class="btn">Começar agora</button>
+        <button class="btn-outline">Ver projetos</button>
+      </div>
+
+      <div class="stats">
+        <div>
+          <h3>+50</h3>
+          <span>Projetos entregues</span>
+        </div>
+
+        <div>
+          <h3>24/7</h3>
+          <span>Suporte técnico</span>
+        </div>
+
+        <div>
+          <h3>100%</h3>
+          <span>Foco em inovação</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="dashboard-header">
+        <div>
+          <p style="color:#aaa; margin-bottom:5px;">Dashboard Tekton</p>
+          <h3 style="font-size:32px;">Performance Digital</h3>
+        </div>
+
+        <div class="rocket">🚀</div>
+      </div>
+
+      <div class="progress-box">
+        <div class="progress-top">
+          <span>Desenvolvimento</span>
+          <span>92%</span>
+        </div>
+
+        <div class="bar">
+          <div class="fill" style="width:92%; background:#00d9ff;"></div>
+        </div>
+      </div>
+
+      <div class="progress-box">
+        <div class="progress-top">
+          <span>UX/UI Design</span>
+          <span>88%</span>
+        </div>
+
+        <div class="bar">
+          <div class="fill" style="width:88%; background:#4287ff;"></div>
+        </div>
+      </div>
+
+      <div class="progress-box">
+        <div class="progress-top">
+          <span>Automação</span>
+          <span>96%</span>
+        </div>
+
+        <div class="bar">
+          <div class="fill" style="width:96%; background:#00ff99;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-title">
+        <p>Serviços</p>
+        <h2>O que a Tekton oferece</h2>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="icon">💻</div>
+          <h3>Desenvolvimento Web</h3>
+          <p>Sites modernos, sistemas administrativos e plataformas sob medida.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="icon">📱</div>
+          <h3>Aplicações Mobile</h3>
+          <p>Apps rápidos, intuitivos e preparados para Android e iOS.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="icon">☁️</div>
+          <h3>Cloud & APIs</h3>
+          <p>Integrações inteligentes, APIs escaláveis e infraestrutura moderna.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="icon">🎨</div>
+          <h3>UI/UX Design</h3>
+          <p>Interfaces elegantes e experiências pensadas para conversão.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="icon">🤖</div>
+          <h3>Automação</h3>
+          <p>Automatize processos e aumente a eficiência do seu negócio.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="icon">🔒</div>
+          <h3>Segurança Digital</h3>
+          <p>Proteção, monitoramento e boas práticas para sistemas modernos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-box">
+        <div>
+          <div class="badge">Sobre a Tekton</div>
+
+          <h2>Tecnologia feita para gerar impacto real.</h2>
+
+          <p>
+            A Tekton nasceu com o objetivo de transformar ideias em soluções digitais modernas, eficientes e escaláveis. Trabalhamos unindo design, performance e inovação.
+          </p>
+
+          <button class="btn">Conhecer mais</button>
+        </div>
+
+        <div class="about-stats">
+          <div class="mini-card">
+            <h3>5+</h3>
+            <p>Anos de experiência</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>99%</h3>
+            <p>Clientes satisfeitos</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Fast</h3>
+            <p>Entrega ágil</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>24h</h3>
+            <p>Suporte estratégico</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Vamos construir algo incrível?</h2>
+
+        <p>
+          Entre em contato com a Tekton e transforme sua ideia em um projeto digital moderno e profissional.
+        </p>
+
+        <div class="cta-buttons">
+          <button class="btn">Falar com a equipe</button>
+          <button class="btn-outline">Ver portfólio</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 TEKTON • Todos os direitos reservados.
+  </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('button');
+
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        button.style.transform = 'translateY(-3px)';
+      });
+
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = 'translateY(0px)';
+      });
+    });
+  </script>
+
+</body>
+</html>
